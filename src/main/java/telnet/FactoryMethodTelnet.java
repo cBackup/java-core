@@ -47,6 +47,8 @@ public class FactoryMethodTelnet {
     private static final Map<String, Map<String, String>> models = new HashMap<String, Map<String, String>>() {{
         put("Mikrotik", null);
         put("Nortel", null);
+        put("BDCOM", null);
+        put("CDATA", null);
         //put("Extream", null); todo implement
     }};
 
@@ -68,7 +70,7 @@ public class FactoryMethodTelnet {
 
         String vendor = coordinates.get("nodeVendor").replaceAll("-", "__");
         String model  = coordinates.get("nodeModel").replaceAll("-", "__");
-
+     
         if(models.get(vendor) == null) {
             if(models.containsKey(vendor)) {
                 className = "_" + vendor + "_Telnet";

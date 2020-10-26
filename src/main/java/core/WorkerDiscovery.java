@@ -36,7 +36,6 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import org.snmp4j.util.DefaultPDUFactory;
 import org.snmp4j.util.TreeEvent;
 import org.snmp4j.util.TreeUtils;
-
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -47,15 +46,16 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
-
 /**
  * Device SNMP discovery class
  */
+
 public class WorkerDiscovery extends AbstractCoreUnit implements Callable<Boolean>
 {
-
+  
     private Gson gson = new Gson();
 
+    
     private Integer snmpVer;
     private Integer snmpPort;
     private String  snmpRead;
@@ -141,6 +141,7 @@ public class WorkerDiscovery extends AbstractCoreUnit implements Callable<Boolea
      */
     public Boolean call()
     {
+
         // parse snmpRetries, snmpTimeout
         if(!this.extractSettings()) {
             return false;
@@ -166,6 +167,7 @@ public class WorkerDiscovery extends AbstractCoreUnit implements Callable<Boolea
     {
         String retries = this.settings.get("snmpRetries");
         String timeout = this.settings.get("snmpTimeout");
+        
 
         /*
          * Set snmp retries
@@ -237,6 +239,7 @@ public class WorkerDiscovery extends AbstractCoreUnit implements Callable<Boolea
          * SNMP object init
          */
         try {
+            
 
             this.snmp = new Snmp(new DefaultUdpTransportMapping());
             this.snmp.listen();
@@ -457,7 +460,7 @@ public class WorkerDiscovery extends AbstractCoreUnit implements Callable<Boolea
      */
     private Boolean sendRequest()
     {
-
+        
         PDU responsePDU;
         ResponseEvent responseEvent;
 
@@ -525,7 +528,21 @@ public class WorkerDiscovery extends AbstractCoreUnit implements Callable<Boolea
                 try {
                     String sOid = vb.getOid().toString();
                     String sVar = vb.getVariable().toString();
-                    this.result.put(discoveryOids.get(sOid), sVar);
+                    Integer llen = Integer.parseInt(this.settings.get("discoverylen"));
+                    if (discoveryOids.get(sOid) == "sys_description" && llen > 0) {
+                           
+                        if (sVar.length() > llen) {
+                            this.result.put(discoveryOids.get(sOid), sVar.substring(0,llen));
+                        }
+                        else{
+                            this.result.put(discoveryOids.get(sOid), sVar);
+                        }
+                        
+                    }
+                    else{
+                        this.result.put(discoveryOids.get(sOid), sVar);
+                    }
+                    
                 }
                 catch (Exception e) {
                     String responsePduVectorConvertMessage = "Task " + this.coordinates.get("taskName") +

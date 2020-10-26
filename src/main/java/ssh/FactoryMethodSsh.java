@@ -46,6 +46,7 @@ public class FactoryMethodSsh {
 
     private static final Map<String, Map<String, String>> models = new HashMap<String, Map<String, String>>() {{
         put("Mikrotik", null);
+        put("Infinet", null);
         //put("Extream", null); todo implement
     }};
 

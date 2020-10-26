@@ -51,6 +51,8 @@ public class Scheduler extends AbstractCoreUnit {
     private String site;
     @Value("${cbackup.token}")
     private String token;
+    @Value("${cbackup.discoverylen}")
+    private String discoverylen;
 
 
     /**
@@ -769,6 +771,9 @@ public class Scheduler extends AbstractCoreUnit {
 
             try {
                 this.settings = this.gson.fromJson(settingsJson, settingsType);
+                this.settings.put("discoverylen", this.discoverylen);
+                
+                
             } catch (Exception e) {
                 this.logSystemException("ERROR", "SCHEDULER INIT", "Can't parse settings from json.", e);
                 throw new Exception("Can't parse settings from json.", e);
